@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Weekly link check — curated lists rot, so verify every Monday.
+    - cron: "0 7 * * 1"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint markdown
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: "**/*.md"
+
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check links
+        # Excluded URLs are real, verified links whose hosts block automated
+        # checkers (403 to bots) — leetcode, Stack Overflow tags, O'Reilly
+        # library pages, Reddit. The actions badge URL is excluded until the
+        # first workflow run creates it.
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --verbose --no-progress --exclude "github.com/varunkonnojutech-lab/awesome-dotnet-learning/actions" --exclude "leetcode.com" --exclude "stackoverflow.com/questions/tagged" --exclude "oreilly.com/library" --exclude "reddit.com" README.md CONTRIBUTING.md
+          fail: true

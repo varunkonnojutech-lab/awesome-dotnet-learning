@@ -1,0 +1,9 @@
+# OS / editor artefacts
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Node (markdownlint via npx)
+node_modules/
